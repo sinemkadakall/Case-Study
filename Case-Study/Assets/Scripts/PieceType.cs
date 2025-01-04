@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
-    public enum PieceTypes
-    {
-        Default,
-        BoosterNavigate,
-        BoosterBomb
-    }
+public enum PieceType
+{
+    Red,
+    Blue,
+    Pink,
+    Green,
+    Yellow,
+    Purple
+}
 
