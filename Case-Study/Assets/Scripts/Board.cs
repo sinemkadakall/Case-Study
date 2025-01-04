@@ -96,7 +96,7 @@ public class Board : MonoBehaviour
             }
         }
 
-        if (CheckBoard())
+        /*if (CheckBoard())
         {
             Debug.Log("We have matches let's re-create the board");
             InitializeBoard();
@@ -104,7 +104,7 @@ public class Board : MonoBehaviour
         else
         {
             Debug.Log("There are no matches, it's time to start the game!");
-        }
+        }*/
     }
 
     private void Destroypieces()
@@ -119,7 +119,7 @@ public class Board : MonoBehaviour
         }
     }
 
-    public bool CheckBoard()
+    /*public bool CheckBoard()
     {
       //  if (GameManager.Instance.isGameEnded)
          //   return false;
@@ -170,7 +170,7 @@ public class Board : MonoBehaviour
         }
 
         return hasMatched;
-    }
+    }*/
 
     public IEnumerator ProcessTurnOnMatchedBoard(bool _subtractMoves)
     {
@@ -183,10 +183,10 @@ public class Board : MonoBehaviour
        // GameManager.Instance.ProcessTurn(piecesToRemove.Count, _subtractMoves);
         yield return new WaitForSeconds(0.4f);
 
-        if (CheckBoard())
+       /* if (CheckBoard())
         {
             StartCoroutine(ProcessTurnOnMatchedBoard(false));
-        }
+        }*/
     }
 
     private void RemoveAndRefill(List<Piece> _piecesToRemove)
@@ -487,29 +487,123 @@ public class Board : MonoBehaviour
     #region Swapping pieces
 
     //select piece
+    /* public void Selectpiece(Piece _piece)
+     {
+         // if we don't have a piece currently selected, then set the piece i just clicked to my selectedpiece
+         if (selectedpiece == null)
+         {
+             Debug.Log(_piece);
+             selectedpiece = _piece;
+         }
+         // if we select the same piece twice, then let's make selectedpiece null
+         else if (selectedpiece == _piece)
+         {
+             selectedpiece = null;
+         }
+         //if selectedpiece is not null and is not the current piece, attempt a swap
+         //selectedpiece back to null
+         else if (selectedpiece != _piece)
+         {
+             Swappiece(selectedpiece, _piece);
+             selectedpiece = null;
+         }
+     }*/
     public void Selectpiece(Piece _piece)
     {
-        // if we don't have a piece currently selected, then set the piece i just clicked to my selectedpiece
-        if (selectedpiece == null)
+        // Eðer seçili bir parça yoksa ve týklanan parçanýn en az 2 komþusu ayný renkteyse yok etme iþlemini baþlat
+        if (_piece != null)
         {
-            Debug.Log(_piece);
-            selectedpiece = _piece;
-        }
-        // if we select the same piece twice, then let's make selectedpiece null
-        else if (selectedpiece == _piece)
-        {
-            selectedpiece = null;
-        }
-        //if selectedpiece is not null and is not the current piece, attempt a swap
-        //selectedpiece back to null
-        else if (selectedpiece != _piece)
-        {
-            Swappiece(selectedpiece, _piece);
-            selectedpiece = null;
+            List<Piece> connectedPieces = GetConnectedPieces(_piece);
+
+            if (connectedPieces.Count >= 2) // En az 2 benzer renkten blok varsa
+            {
+                Debug.Log("En az 2 ayný renkten blok bulundu, yok ediliyor...");
+                DestroyPieces(connectedPieces);
+            }
+            else
+            {
+                Debug.Log("Yeterli eþleþme bulunamadý.");
+            }
         }
     }
+    // Ayný renkten baðlý parçalarý bulma (yeni bir fonksiyon ekle)
+    private List<Piece> GetConnectedPieces(Piece piece)
+    {
+        List<Piece> connectedPieces = new List<Piece>();
+        PieceType pieceType = piece.pieceType;
+
+        // Baðlantýlý parçalarý bulmak için bir Queue mekanizmasý kullan
+        Queue<Piece> toCheck = new Queue<Piece>();
+        toCheck.Enqueue(piece);
+
+        while (toCheck.Count > 0)
+        {
+            Piece currentPiece = toCheck.Dequeue();
+
+            if (!connectedPieces.Contains(currentPiece) && currentPiece.pieceType == pieceType)
+            {
+                connectedPieces.Add(currentPiece);
+
+                // Komþularý sýraya ekle
+                foreach (Piece neighbor in GetNeighbors(currentPiece))
+                {
+                    if (!connectedPieces.Contains(neighbor) && neighbor.pieceType == pieceType)
+                    {
+                        toCheck.Enqueue(neighbor);
+                    }
+                }
+            }
+        }
+
+        return connectedPieces;
+    }
+
+    // Komþularý döndüren bir yardýmcý fonksiyon ekle
+    private List<Piece> GetNeighbors(Piece piece)
+    {
+        List<Piece> neighbors = new List<Piece>();
+        int x = piece.xIndex;
+        int y = piece.yIndex;
+
+        // Yukarý
+        if (y + 1 < height && pieceBoard[x, y + 1].isUsable)
+            neighbors.Add(pieceBoard[x, y + 1].piece.GetComponent<Piece>());
+
+        // Aþaðý
+        if (y - 1 >= 0 && pieceBoard[x, y - 1].isUsable)
+            neighbors.Add(pieceBoard[x, y - 1].piece.GetComponent<Piece>());
+
+        // Sað
+        if (x + 1 < width && pieceBoard[x + 1, y].isUsable)
+            neighbors.Add(pieceBoard[x + 1, y].piece.GetComponent<Piece>());
+
+        // Sol
+        if (x - 1 >= 0 && pieceBoard[x - 1, y].isUsable)
+            neighbors.Add(pieceBoard[x - 1, y].piece.GetComponent<Piece>());
+
+        return neighbors;
+    }
+
+    // Parçalarý yok eden bir yardýmcý fonksiyon ekle
+    private void DestroyPieces(List<Piece> pieces)
+    {
+        foreach (Piece piece in pieces)
+        {
+            int x = piece.xIndex;
+            int y = piece.yIndex;
+
+            // Parçayý yok et
+            Destroy(piece.gameObject);
+
+            // Parça tahtasýný güncelle
+            pieceBoard[x, y] = new Node(true, null);
+        }
+
+        // Parçalarý yok ettikten sonra boþluklarý doldur
+        StartCoroutine(ProcessTurnOnMatchedBoard(false));
+    }
     //swap piece - logic
-    private void Swappiece(Piece _currentpiece, Piece _targetpiece)
+  /*  private void Swappiece(Piece _currentpiece, Piece _targetpiece)
     {
         if (!IsAdjacent(_currentpiece, _targetpiece))
         {
@@ -521,9 +615,9 @@ public class Board : MonoBehaviour
         isProcessingMove = true;
 
         StartCoroutine(ProcessMatches(_currentpiece, _targetpiece));
-    }
+    }*/
     //do swap
-    private void DoSwap(Piece _currentpiece, Piece _targetpiece)
+  /*  private void DoSwap(Piece _currentpiece, Piece _targetpiece)
     {
         GameObject temp = pieceBoard[_currentpiece.xIndex, _currentpiece.yIndex].piece;
 
@@ -541,9 +635,9 @@ public class Board : MonoBehaviour
         _currentpiece.MoveToTarget(pieceBoard[_targetpiece.xIndex, _targetpiece.yIndex].piece.transform.position);
 
         _targetpiece.MoveToTarget(pieceBoard[_currentpiece.xIndex, _currentpiece.yIndex].piece.transform.position);
-    }
+    }*/
 
-    private IEnumerator ProcessMatches(Piece _currentpiece, Piece _targetpiece)
+  /*  private IEnumerator ProcessMatches(Piece _currentpiece, Piece _targetpiece)
     {
         yield return new WaitForSeconds(0.2f);
 
@@ -556,14 +650,14 @@ public class Board : MonoBehaviour
             DoSwap(_currentpiece, _targetpiece);
         }
         isProcessingMove = false;
-    }
+    }*/
 
 
     //IsAdjacent
-    private bool IsAdjacent(Piece _currentpiece, Piece _targetpiece)
+   /* private bool IsAdjacent(Piece _currentpiece, Piece _targetpiece)
     {
         return Mathf.Abs(_currentpiece.xIndex - _targetpiece.xIndex) + Mathf.Abs(_currentpiece.yIndex - _targetpiece.yIndex) == 1;
-    }
+    }*/
 
     //ProcessMatches
 
@@ -571,21 +665,22 @@ public class Board : MonoBehaviour
 
 }
 
-public class MatchResult
-{
-    public List<Piece> connectedpieces; 
 
-    public MatchDirection direction;
-}
+    public class MatchResult
+    {
+        public List<Piece> connectedpieces; 
 
-public enum MatchDirection
-{
-    Vertical,
-    Horizontal,
-    LongVertical,
-    LongHorizontal,
-    Super,
-    None
-}
+        public MatchDirection direction;
+    }
+
+    public enum MatchDirection
+    {
+        Vertical,
+        Horizontal,
+        LongVertical,
+        LongHorizontal,
+        Super,
+        None
+    }
 
 
