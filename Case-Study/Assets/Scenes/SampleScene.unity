@@ -363,6 +363,7 @@ GameObject:
   m_Component:
   - component: {fileID: 616715910}
   - component: {fileID: 616715909}
+  - component: {fileID: 616715911}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -424,6 +425,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &616715911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 616715908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ceffb1143ee78b488f8f2667433cefb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosionForce: 12
+  explosionDuration: 5
+  fallSpeed: 8000
+  delayBeforeParticles: 0.2
 --- !u!1 &1219842038
 GameObject:
   m_ObjectHideFlags: 0
@@ -489,8 +506,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.03, y: 0.0024948}
-  m_SizeDelta: {x: 405.57, y: 504.51}
+  m_AnchoredPosition: {x: 2.03, y: -0.00064754}
+  m_SizeDelta: {x: 405.57, y: 543.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1400043098
 MonoBehaviour:
@@ -632,8 +649,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -22}
-  m_SizeDelta: {x: 342.59, y: 436.91}
+  m_AnchoredPosition: {x: 0, y: -25}
+  m_SizeDelta: {x: 370.29, y: 480.65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1952461123
 MonoBehaviour:

@@ -5,9 +5,7 @@ using UnityEngine;
 public class MatchManager : MonoBehaviour
 {
 
-}
-
-    /*private Board board;
+   /* private Board board;
     public List<Piece> piecesToRemove = new();
 
     private void Awake()
@@ -153,7 +151,7 @@ public class MatchManager : MonoBehaviour
             }
         }
         return matchedResults;
-    }
+    }*/
 
 }
 public class MatchResult
@@ -169,4 +167,4 @@ public enum MatchDirection
     LongHorizontal,
     Super,
     None
-}*/
+}
