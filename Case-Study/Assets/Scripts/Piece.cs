@@ -35,10 +35,7 @@ public class Piece : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        // Mevcut sprite'ý default olarak kaydet
-
-        //BUNU TEST ÝÇÝN KAPADIM
-        //defaultSprite = spriteRenderer.sprite;
+      
 
         if (spriteRenderer == null)
         {

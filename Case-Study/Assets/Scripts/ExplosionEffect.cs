@@ -18,23 +18,22 @@ public class ExploitAnimation : MonoBehaviour
             if (animator == null)
                 animator = target.AddComponent<ExploitAnimation>();
 
-            // Patlama sekansýný baþlat
+            
             animator.StartCoroutine(animator.HandleExplosionSequence(target));
         }
     }
 
     private IEnumerator HandleExplosionSequence(GameObject target)
     {
-        // Ana parçayý hazýrla
+   
         PrepareGridForExplosion(target);
 
-        // Parçacýk efektlerini baþlatmadan önce kýsa bir bekleme
         yield return new WaitForSeconds(delayBeforeParticles);
 
-        // Parçacýk efektlerini baþlat
+    
         ScatterChildrenOf(target);
 
-        // Tüm efektler bitince objeyi temizle
+       
         yield return new WaitForSeconds(explosionDuration);
         Destroy(target);
     }
@@ -44,7 +43,7 @@ public class ExploitAnimation : MonoBehaviour
         var mainObject = gridObject.transform.Find("main")?.gameObject;
         if (mainObject != null)
         {
-            // Ana parçayý yavaþça saydamlaþtýr
+           
             StartCoroutine(FadeOutMain(mainObject));
         }
 
@@ -81,7 +80,7 @@ public class ExploitAnimation : MonoBehaviour
             children.Add(child);
         }
 
-        // Parçacýklarý rastgele sýrayla baþlat
+      
         foreach (Transform child in children)
         {
             StartCoroutine(ScatterChild(child.gameObject));
@@ -106,7 +105,7 @@ public class ExploitAnimation : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / explosionDuration;
 
-            // Geliþtirilmiþ hareket ve düþüþ fiziði
+        
             float explosionProgress = Mathf.Sin(progress * Mathf.PI * 0.5f);
             Vector3 explosionOffset = direction * explosionForce * (1 - explosionProgress);
             Vector3 fallOffset = Vector3.down * fallSpeed * progress * progress;
@@ -114,7 +113,7 @@ public class ExploitAnimation : MonoBehaviour
             Vector3 newPosition = startPosition + explosionOffset + fallOffset;
             Quaternion newRotation = Quaternion.Lerp(startRotation, targetRotation, progress);
 
-            // Yumuþak geçiþli saydamlýk
+         
             float alpha = Mathf.Lerp(1f, 0f, Mathf.Pow(progress, 0.5f));
             spriteRenderer.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
 

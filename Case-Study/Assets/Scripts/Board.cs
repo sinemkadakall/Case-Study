@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class Board : MonoBehaviour
 {
-    //define the size of the board
+   
     public int width = 6;
     public int height = 8;
-    //define some spacing for the board
+ 
     public float spacingX;
     public float spacingY;
-    //get a reference to our piece prefabs
+   
     public GameObject[] piecePrefabs;
-    //get a reference to the collection nodes pieceBoard + GO
+    
     public Node[,] pieceBoard;
     public GameObject pieceBoardGO;
 
@@ -29,9 +29,8 @@ public class Board : MonoBehaviour
     List<Piece> piecesToRemove = new();
 
    
-    //layoutArray
+  
     public ArrayLayout arrayLayout;
-    //public static of pieceboard
     public static Board Instance;
 
     private void Awake()
@@ -70,7 +69,6 @@ public class Board : MonoBehaviour
      {
 
         arrayLayout.InitializeRows(width, height);
-        // Destroypieces();
         pieceBoard = new Node[width, height];
 
          spacingX = (float)(width - 1) / 2;
@@ -81,8 +79,7 @@ public class Board : MonoBehaviour
              for (int x = 0; x < width; x++)
              {
                  Vector2 position = new Vector2(x - spacingX, y - spacingY);
-
-                 //Vector2 position = new Vector2((x * 1.3f) - spacingX, (y * 1.3f) - spacingY);
+          
                  if (arrayLayout.rows[y].row[x])
                  {
                      pieceBoard[x, y] = new Node(false, null);
@@ -94,15 +91,13 @@ public class Board : MonoBehaviour
                      GameObject piece = Instantiate(piecePrefabs[randomIndex], position, Quaternion.identity);
                      piece.transform.SetParent(pieceParent.transform);
                      piece.GetComponent<Piece>().SetIndicies(x, y);
-                     pieceBoard[x, y] = new Node(true, piece);
-                   //  piecesToDestroy.Add(piece);
+                     pieceBoard[x, y] = new Node(true, piece);               
                  }
              }
          }
 
      }
     
-
 
     public IEnumerator ProcessTurnOnMatchedBoard(bool _subtractMoves)
     {
@@ -118,17 +113,13 @@ public class Board : MonoBehaviour
 
     private void RemoveAndRefill(List<Piece> _piecesToRemove)
     {
-        //Removing the piece and clearing the board at that location
+      
         foreach (Piece piece in _piecesToRemove)
         {
-            //getting it's x and y indicies and storing them
             int _xIndex = piece.xIndex;
             int _yIndex = piece.yIndex;
-
-            //Destroy the piece
+        
             Destroy(piece.gameObject);
-
-            //Create a blank node on the piece board.
             pieceBoard[_xIndex, _yIndex] = new Node(true, null);
         }
 
@@ -138,7 +129,6 @@ public class Board : MonoBehaviour
             {
                 if (pieceBoard[x, y].piece == null)
                 {
-            //        Debug.Log("The location X: " + x + " Y: " + y + " is empty, attempting to refill it.");
                     Refillpiece(x, y);
                 }
             }
@@ -147,39 +137,27 @@ public class Board : MonoBehaviour
 
     private void Refillpiece(int x, int y)
     {
-        //y offset
+ 
         int yOffset = 1;
-
-        //while the cell above our current cell is null and we're below the height of the board
         while (y + yOffset < height && pieceBoard[x, y + yOffset].piece == null)
         {
-            //increment y offset
-          //  Debug.Log("The piece above me is null, but i'm not at the top of the board yet, so add to my yOffset and try again. Current Offset is: " + yOffset + " I'm about to add 1.");
             yOffset++;
         }
 
-        //we've either hit the top of the board or we found a piece
 
         if (y + yOffset < height && pieceBoard[x, y + yOffset].piece != null)
         {
-            //we've found a piece
-
+  
             Piece pieceAbove = pieceBoard[x, y + yOffset].piece.GetComponent<Piece>();
-
-            //Move it to the correct location
+            
             Vector3 targetPos = new Vector3(x - spacingX, y - spacingY, pieceAbove.transform.position.z);
-         //   Debug.Log("I've found a piece when refilling the board and it was in the location: [" + x + "," + (y + yOffset) + "] we have moved it to the location: [" + x + "," + y + "]");
-            //Move to location
             pieceAbove.MoveToTarget(targetPos);
-            //update incidices
             pieceAbove.SetIndicies(x, y);
-            //update our pieceBoard
             pieceBoard[x, y] = pieceBoard[x, y + yOffset];
-            //set the location the piece came from to null
             pieceBoard[x, y + yOffset] = new Node(true, null);
         }
 
-        //if we've hit the top of the board without finding a piece
+      
         if (y + yOffset == height)
         {
             Debug.Log("I've reached the top of the board without finding a piece");
@@ -219,25 +197,6 @@ public class Board : MonoBehaviour
         return lowestNull;
     }
 
-
-    /* public void Selectpiece(Piece _piece)
-     {
-         // Eðer seçili bir parça yoksa ve týklanan parçanýn en az 2 komþusu ayný renkteyse yok etme iþlemini baþlat
-         if (_piece != null)
-         {
-             List<Piece> connectedPieces = GetConnectedPieces(_piece);
-
-             if (connectedPieces.Count >= 2) // En az 2 benzer renkten blok varsa
-             {
-                 Debug.Log("En az 2 ayný renkten blok bulundu, yok ediliyor...");
-                 DestroyPieces(connectedPieces);
-             }
-             else
-             {
-                 Debug.Log("Yeterli eþleþme bulunamadý.");
-             }
-         }
-     }*/
     public void Selectpiece(Piece _piece)
     {
         if (_piece != null)
@@ -262,84 +221,6 @@ public class Board : MonoBehaviour
         }
     }
 
-    /*  private IEnumerator DestroyPiecesAfterDelay(List<Piece> pieces)
-      {
-          // Yeni ikonlarý görebilmek için bekle
-            yield return new WaitForSeconds(0.5f);
-
-          List<(int x, int y)> positions = new List<(int x, int y)>();
-          foreach (Piece piece in pieces)
-          {
-              if (piece != null)
-              {
-                  positions.Add((piece.xIndex, piece.yIndex));
-              }
-          }
-
-
-          // Sonra parçalarý yok et ve board'u güncelle
-          foreach (var position in positions)
-          {
-              if (pieceBoard[position.x, position.y].piece != null)
-              {
-                  Destroy(pieceBoard[position.x, position.y].piece.gameObject);
-                  pieceBoard[position.x, position.y] = new Node(true, null);
-              }
-          }
-
-          // Boþluklarý doldur
-          StartCoroutine(ProcessTurnOnMatchedBoard(false));
-      }
-
-      */
-
-
-    /* private IEnumerator DestroyPiecesAfterDelay(List<Piece> pieces)
-     {
-         // Yeni ikonlarý görebilmek için bekle
-         yield return new WaitForSeconds(0.5f);
-
-         foreach (Piece piece in pieces)
-         {
-             if (piece != null)
-             {
-                 // ExploitPaths objesini bul
-                 Transform exploitPaths = piece.transform.Find("ExploitPaths");
-                 if (exploitPaths != null)
-                 {
-                     // ExploitPaths'i aktifleþtir ve parçadan ayýr
-                     exploitPaths.gameObject.SetActive(true);
-                     exploitPaths.SetParent(null); // Parçadan ayýr
-
-                     // Patlama efektini baþlat
-                     ExploitAnimation.TriggerExplosionAtGrid(exploitPaths.gameObject);
-                 }
-             }
-         }
-
-         // Board'u güncelle
-         List<(int x, int y)> positions = new List<(int x, int y)>();
-         foreach (Piece piece in pieces)
-         {
-             if (piece != null)
-             {
-                 positions.Add((piece.xIndex, piece.yIndex));
-             }
-         }
-
-         foreach (var position in positions)
-         {
-             if (pieceBoard[position.x, position.y].piece != null)
-             {
-                 Destroy(pieceBoard[position.x, position.y].piece.gameObject);
-                 pieceBoard[position.x, position.y] = new Node(true, null);
-             }
-         }
-
-         // Boþluklarý doldur
-         StartCoroutine(ProcessTurnOnMatchedBoard(false));
-     }*/
-
     private IEnumerator DestroyPiecesAfterDelay(List<Piece> pieces)
     {
         // Yeni ikonlarý görebilmek için bekle
@@ -363,11 +244,8 @@ public class Board : MonoBehaviour
 
                     // ExploitPaths'i aktifleþtir
                     exploitPaths.gameObject.SetActive(true);
-                    // Her bir parçayý hareket ettir
-                    foreach (Transform child in exploitPaths)
-                    {
-                      //  StartCoroutine(AnimateExploitPiece(child.gameObject));
-                    }
+                   
+                   
                 }
             }
         }
@@ -397,18 +275,18 @@ public class Board : MonoBehaviour
             }
         }
 
-        // Boþluklarý doldur
+  
         StartCoroutine(ProcessTurnOnMatchedBoard(false));
     }
 
-    // Ayný renkten baðlý parçalarý bulma (yeni bir fonksiyon ekle)
+    
     public List<Piece> GetConnectedPieces(Piece piece)
     {
         //Baþlangýçta liste boþ 
         List<Piece> connectedPieces = new List<Piece>();
         PieceType pieceType = piece.pieceType;
 
-        // Baðlantýlý parçalarý bulmak için bir Queue mekanizmasý kullan
+        // Baðlantýlý parçalarý bulmak için bir Queue mekanizmasý 
         Queue<Piece> toCheck = new Queue<Piece>();
         toCheck.Enqueue(piece);
 
@@ -434,7 +312,7 @@ public class Board : MonoBehaviour
         return connectedPieces;
     }
 
-    // Komþularý döndüren bir yardýmcý fonksiyon ekle
+   
     private List<Piece> GetNeighbors(Piece piece)
     {
         List<Piece> neighbors = new List<Piece>();
@@ -460,7 +338,7 @@ public class Board : MonoBehaviour
         return neighbors;
     }
 
-    // Parçalarý yok eden bir yardýmcý fonksiyon
+ 
     private void DestroyPieces(List<Piece> pieces)
     {
         foreach (Piece piece in pieces)
@@ -475,7 +353,7 @@ public class Board : MonoBehaviour
             pieceBoard[x, y] = new Node(true, null);
         }
 
-        // Parçalarý yok ettikten sonra boþluklarý doldur
+        // Parçalarý yok ettikten sonra boþluklarý doldurur
         StartCoroutine(ProcessTurnOnMatchedBoard(false));
     }
     private bool HasAnyPossibleMatches()
@@ -490,7 +368,7 @@ public class Board : MonoBehaviour
                     Piece currentPiece = pieceBoard[x, y].piece.GetComponent<Piece>();
                     List<Piece> connectedPieces = GetConnectedPieces(currentPiece);
 
-                    // Eðer 2 veya daha fazla baðlantýlý parça varsa, eþleþme mümkün
+                    // Eðer 2 veya daha fazla baðlantýlý parça varsa true dönder
                     if (connectedPieces.Count >= 2)
                     {
                         return true;
@@ -528,7 +406,7 @@ public class Board : MonoBehaviour
             pieceTypes[randomIndex] = temp;
         }
 
-        // Yeni karýþtýrýlmýþ parçalarý yerleþtir
+      
         int pieceIndex = 0;
         for (int x = 0; x < width; x++)
         {
@@ -538,7 +416,7 @@ public class Board : MonoBehaviour
                 {
                     Vector2 position = new Vector2(x - spacingX, y - spacingY);
 
-                    // Parça tipine göre prefab seç
+                   
                     GameObject prefab = piecePrefabs[(int)pieceTypes[pieceIndex]];
                     GameObject newPiece = Instantiate(prefab, position, Quaternion.identity);
                     newPiece.transform.SetParent(pieceParent.transform);
@@ -554,7 +432,7 @@ public class Board : MonoBehaviour
     }
     private IEnumerator CheckForNoMatches()
     {
-        // Mevcut hamlenin ve animasyonlarýn tamamlanmasýný bekle
+        
         yield return new WaitForSeconds(0.5f);
 
         // Eþleþme kontrolü
